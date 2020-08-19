@@ -1,0 +1,8 @@
+CC = g++
+DEBUG = -g
+
+testBinLFSR:    testBinLFSR.cc BinLFSR.o BinLFSR.h
+				$(CC) -o testBinLFSR $(DEBUG) testBinLFSR.cc BinLFSR.o
+
+BinLFSR.o:      BinLFSR.cc BinLFSR.h
+				$(CC) -c $(DEBUG) BinLFSR.cc

@@ -1,0 +1,69 @@
+// test the erasure decoder
+
+F<a> := FiniteField(16);
+R<x> := PolynomialRing(F);
+
+Gamma := (1-a^6*x)*(1-a^7*x);
+t := 3;
+f := 2;
+j1 := 7;
+j2 := 6;
+Y1 := a^j1;
+Y2 := a^j2;
+
+rt := a^5*x^11 + a^6*x^9 + a^11*x^5 + x^4 + a^11*x^3 + a^6*x^2 + a^12;
+// r(x) without the erasures in it
+
+S1 := Evaluate(rt,a);
+S2 := Evaluate(rt,a^2);
+S3 := Evaluate(rt,a^3);
+S4 := Evaluate(rt,a^4);
+S5 := Evaluate(rt,a^5);
+S6 := Evaluate(rt,a^6);
+
+S := S1 + S2*x + S3*x^2 + S4*x^3 + S5*x^4 + S6*x^5;
+
+Xi := (Gamma*S) mod x^(2*t);
+
+
+// Run the Euclidean algorithm
+
+aeuc := x^(2*t);
+beuc := Xi;
+nu := t + (f div 2);
+
+// run the Euclidean alg
+rm1 := aeuc;
+ri := beuc;
+sm1 := 1;
+si := 0;
+tm1 := 0;
+ti := 1;
+
+while(ri ne 0) do
+   rm2 := rm1;
+   rm1 := ri;
+   tm2 := tm1;
+   tm1 := ti;
+   sm2 := sm1;
+   sm1 := si;
+   qi := rm2 div rm1;
+   ri := rm2 mod rm1;
+print ri;
+   si := sm2 - qi*sm1;
+   ti := tm2 - qi*tm1;
+   if(Degree(ri) lt nu) then break; end if ;
+end while;
+
+ti;  // the error locator polynomial (not normalized)
+
+
+Lambda := ti/Evaluate(ti,0);   // normalize so constant coeff. is 1
+X1 := a^11;
+Omega := (Lambda*Xi) mod x^(2*t);
+Phi := (Lambda*Gamma);
+
+
+e1 := Evaluate(Omega,X1^(-1))/Evaluate(Derivative(Phi),X1^(-1));
+f1 := Evaluate(Omega,Y1^(-1))/Evaluate(Derivative(Phi),Y1^(-1));
+f2 := Evaluate(Omega,Y2^(-1))/Evaluate(Derivative(Phi),Y2^(-1));
